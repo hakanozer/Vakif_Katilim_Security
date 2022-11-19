@@ -1,6 +1,7 @@
 package com.works.configs;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +42,8 @@ public class FilterConfig implements Filter {
 
         request.setCharacterEncoding("UTF8");
         response.setCharacterEncoding("UTF8");
+
+
 
 
         // xss control
@@ -89,6 +92,25 @@ public class FilterConfig implements Filter {
         } catch (Exception e) {
             System.err.println("req hatası : " + e);
         }
+
+        // Session Control for api
+        String path = request.getRequestURL().toString();
+        if ( path.contains("product") ) {
+             boolean sessionStatus = request.getSession().getAttribute("admin") == null;
+             if (sessionStatus) {
+
+                 /*
+                 response.setStatus(401);
+                 response.setContentType("application/json");
+                 response.setCharacterEncoding("UTF-8");
+                 request.setAttribute("data", "{status: false, message: 'Session Login Fail'}" );
+                  */
+                 //response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+                 //response.setHeader("Location", "/errosRest");
+                 response.sendRedirect("/errosRest");
+             }
+        }
+
 
         chain.doFilter(request, response);
     }
